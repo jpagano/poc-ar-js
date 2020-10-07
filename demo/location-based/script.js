@@ -1,61 +1,36 @@
 window.onload = () => {
-  render();
+  let places = staticLoadPlaces();
+  renderPlaces(places);
 };
 
-const models = [
-  {
-    url: './assets/magnemite/scene.gltf',
-    scale: '0.5 0.5 0.5',
-    rotation: '0 225 0'
-  },
-  {
-    url: './assets/articuno/scene.gltf',
-    scale: '0.2 0.2 0.2',
-    rotation: '0 225 0'
-  },
-  {
-    url: './assets/dragonite/scene.gltf',
-    scale: '0.08 0.08 0.08',
-    rotation: '0 225 0'
-  },
-];
+function staticLoadPlaces() {
+  return [
+    {
+      name: 'Magnemite',
+      location: {
+        lat: 44.496470,
+        lng: 11.320180,
+      }
+    },
+  ];
+}
 
-let modelIndex = 0;
-const setModel = (model, entity) => {
-  if (model.scale) {
-    entity.setAttribute('scale', model.scale);
-  }
+function renderPlaces(places) {
+  let scene = document.querySelector('a-scene');
 
-  if (model.rotation) {
-    entity.setAttribute('rotation', model.rotation);
-  }
+  places.forEach((place) => {
+    let latitude = place.location.lat;
+    let longitude = place.location.lng;
 
-  if (model.position) {
-    entity.setAttribute('position', model.position);
-  }
-
-  entity.setAttribute('gltf-model', model.url);
-};
-
-function render() {
-  const scene = document.querySelector('a-scene');
-
-  navigator.geolocation.getCurrentPosition(function (position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-
-    const model = document.createElement('a-entity');
+    let model = document.createElement('a-entity');
     model.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-
-    setModel(models[modelIndex], model);
-
+    model.setAttribute('gltf-model', './assets/magnemite/scene.gltf');
+    model.setAttribute('rotation', '0 180 0');
     model.setAttribute('animation-mixer', '');
+    model.setAttribute('scale', '0.5 0.5 0.5');
 
-    document.querySelector('button[data-action="change"]').addEventListener('click', function () {
-      const entity = document.querySelector('[gps-entity-place]');
-      modelIndex++;
-      const newIndex = modelIndex % models.length;
-      setModel(models[newIndex], entity);
+    model.addEventListener('loaded', () => {
+      window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'))
     });
 
     scene.appendChild(model);
