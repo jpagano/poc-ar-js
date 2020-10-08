@@ -33,6 +33,7 @@ function renderPlaces(places) {
     model.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
     model.setAttribute('gltf-model', './assets/plush_toy/scene.gltf');
     model.setAttribute('rotation', '0 0 0');
+    model.setAttribute('look-at', '[gps-camera]');
     model.setAttribute('animation-mixer', '');
     model.setAttribute('scale', '1 1 1');
 
